@@ -61,6 +61,14 @@ Instantiating `OldClient()` emits a `DeprecationWarning`.
 | `deprecated_param(param, *, renamed_to, remove_in)` | Function decorator that warns when a deprecated parameter is passed and optionally maps it to its replacement |
 | `deprecated_class(remove_in, *, alternative, message)` | Class decorator that emits `DeprecationWarning` on instantiation |
 
+
+## Development
+
+```bash
+pip install -e .
+python -m pytest tests/ -v
+```
+
 ## License
 
 MIT

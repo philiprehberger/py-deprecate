@@ -2,8 +2,7 @@
 
 [![Tests](https://github.com/philiprehberger/py-deprecate/actions/workflows/publish.yml/badge.svg)](https://github.com/philiprehberger/py-deprecate/actions/workflows/publish.yml)
 [![PyPI version](https://img.shields.io/pypi/v/philiprehberger-deprecate.svg)](https://pypi.org/project/philiprehberger-deprecate/)
-[![License](https://img.shields.io/github/license/philiprehberger/py-deprecate)](LICENSE)
-[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
+[![Last updated](https://img.shields.io/github/last-commit/philiprehberger/py-deprecate)](https://github.com/philiprehberger/py-deprecate/commits/main)
 
 Decorator and utilities for deprecating functions, parameters, and classes with zero boilerplate.
 
@@ -62,7 +61,6 @@ Instantiating `OldClient()` emits a `DeprecationWarning`.
 | `deprecated_param(param, *, renamed_to, remove_in)` | Function decorator that warns when a deprecated parameter is passed and optionally maps it to its replacement |
 | `deprecated_class(remove_in, *, alternative, message)` | Class decorator that emits `DeprecationWarning` on instantiation |
 
-
 ## Development
 
 ```bash
@@ -70,6 +68,24 @@ pip install -e .
 python -m pytest tests/ -v
 ```
 
+## Support
+
+If you find this project useful:
+
+⭐ [Star the repo](https://github.com/philiprehberger/py-deprecate)
+
+🐛 [Report issues](https://github.com/philiprehberger/py-deprecate/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+
+💡 [Suggest features](https://github.com/philiprehberger/py-deprecate/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
+
+❤️ [Sponsor development](https://github.com/sponsors/philiprehberger)
+
+🌐 [All Open Source Projects](https://philiprehberger.com/open-source-packages)
+
+💻 [GitHub Profile](https://github.com/philiprehberger)
+
+🔗 [LinkedIn Profile](https://www.linkedin.com/in/philiprehberger)
+
 ## License
 
-MIT
+[MIT](LICENSE)

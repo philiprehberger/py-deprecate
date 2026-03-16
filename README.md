@@ -1,5 +1,9 @@
 # philiprehberger-deprecate
 
+[![Tests](https://github.com/philiprehberger/py-deprecate/actions/workflows/publish.yml/badge.svg)](https://github.com/philiprehberger/py-deprecate/actions/workflows/publish.yml)
+[![PyPI version](https://img.shields.io/pypi/v/philiprehberger-deprecate.svg)](https://pypi.org/project/philiprehberger-deprecate/)
+[![License](https://img.shields.io/github/license/philiprehberger/py-deprecate)](LICENSE)
+
 Decorator and utilities for deprecating functions, parameters, and classes with zero boilerplate.
 
 ## Install

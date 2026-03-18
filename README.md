@@ -6,7 +6,7 @@
 
 Decorator and utilities for deprecating functions, parameters, and classes with zero boilerplate.
 
-## Install
+## Installation
 
 ```bash
 pip install philiprehberger-deprecate

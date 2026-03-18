@@ -24,9 +24,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/philiprehberger/py-deprecate"
+Homepage = "https://github.com/philiprehberger/py-deprecate#readme"
 Repository = "https://github.com/philiprehberger/py-deprecate"
 Issues = "https://github.com/philiprehberger/py-deprecate/issues"
+Changelog = "https://github.com/philiprehberger/py-deprecate/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/philiprehberger_deprecate"]

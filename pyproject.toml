@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "philiprehberger-deprecate"
-version = "0.1.5"
+version = "0.1.6"
 description = "Decorator and utilities for deprecating functions, parameters, and classes with zero boilerplate"
 readme = "README.md"
 license = "MIT"
@@ -31,3 +31,9 @@ Changelog = "https://github.com/philiprehberger/py-deprecate/blob/main/CHANGELOG
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/philiprehberger_deprecate"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+strict = true

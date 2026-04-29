@@ -15,7 +15,12 @@ pip install philiprehberger-deprecate
 ## Usage
 
 ```python
-from philiprehberger_deprecate import deprecated, deprecated_class, deprecated_param
+from philiprehberger_deprecate import (
+    deprecated,
+    deprecated_class,
+    deprecated_module,
+    deprecated_param,
+)
 ```
 
 ### Deprecate a function
@@ -53,6 +58,21 @@ class OldClient:
 
 Instantiating `OldClient()` emits a `DeprecationWarning`.
 
+### Deprecate a module
+
+```python
+# in mypkg/legacy/__init__.py
+from philiprehberger_deprecate import deprecated_module
+
+deprecated_module(__name__, remove_in="2.0.0", alternative="mypkg.modern")
+```
+
+Importing `mypkg.legacy` emits:
+
+```
+DeprecationWarning: Module 'mypkg.legacy' is deprecated. Will be removed in 2.0.0. Use 'mypkg.modern' instead.
+```
+
 ## API
 
 | Function | Description |
@@ -60,6 +80,7 @@ Instantiating `OldClient()` emits a `DeprecationWarning`.
 | `deprecated(remove_in, *, alternative, message)` | Function decorator that emits `DeprecationWarning` on each call |
 | `deprecated_param(param, *, renamed_to, remove_in)` | Function decorator that warns when a deprecated parameter is passed and optionally maps it to its replacement |
 | `deprecated_class(remove_in, *, alternative, message)` | Class decorator that emits `DeprecationWarning` on instantiation |
+| `deprecated_module(name, *, remove_in, alternative, message)` | Emits `DeprecationWarning` once when a deprecated module is imported |
 
 ## Development
 

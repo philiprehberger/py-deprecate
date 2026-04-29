@@ -6,7 +6,12 @@ import functools
 import warnings
 from typing import Any, Callable, TypeVar
 
-__all__ = ["deprecated", "deprecated_class", "deprecated_param"]
+__all__ = [
+    "deprecated",
+    "deprecated_class",
+    "deprecated_module",
+    "deprecated_param",
+]
 
 F = TypeVar("F", bound=Callable[..., Any])
 C = TypeVar("C", bound=type)
@@ -117,6 +122,39 @@ def deprecated_class(
         return cls
 
     return decorator
+
+
+def deprecated_module(
+    name: str,
+    *,
+    remove_in: str = "",
+    alternative: str = "",
+    message: str = "",
+) -> None:
+    """Emit a one-time ``DeprecationWarning`` indicating that a module is deprecated.
+
+    Call this from a deprecated module's ``__init__.py`` so importing the
+    module surfaces the warning to consumers.
+
+    Args:
+        name: Module name (typically pass ``__name__``).
+        remove_in: Version when the module will be removed.
+        alternative: Suggested replacement module.
+        message: Custom deprecation message. Overrides the auto-generated one.
+
+    Example:
+        >>> # in mypkg/legacy/__init__.py
+        >>> from philiprehberger_deprecate import deprecated_module
+        >>> deprecated_module(__name__, remove_in="2.0.0", alternative="mypkg.modern")
+    """
+    msg = _build_message(
+        kind="Module",
+        name=name,
+        remove_in=remove_in,
+        alternative=alternative,
+        message=message,
+    )
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
 
 
 def _build_message(

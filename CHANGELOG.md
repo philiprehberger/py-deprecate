@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0 (2026-05-30)
+
+- Add `deprecated_attribute` descriptor for marking class attributes
+- Add `silenced()` context manager for suppressing package DeprecationWarnings in tests
+
 ## 0.2.0 (2026-04-29)
 
 - Add `deprecated_module(name, ...)` helper to flag deprecated modules at import time

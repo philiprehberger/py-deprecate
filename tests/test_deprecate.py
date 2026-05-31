@@ -8,9 +8,11 @@ import pytest
 
 from philiprehberger_deprecate import (
     deprecated,
+    deprecated_attribute,
     deprecated_class,
     deprecated_module,
     deprecated_param,
+    silenced,
 )
 
 
@@ -139,3 +141,78 @@ class TestDeprecatedModule:
             warnings.simplefilter("always")
             deprecated_module("legacy", message="legacy is gone soon")
         assert str(caught[0].message) == "legacy is gone soon"
+
+
+class TestDeprecatedAttribute:
+    def test_set_emits_warning(self) -> None:
+        class Foo:
+            old = deprecated_attribute("old")
+
+        foo = Foo()
+        with pytest.warns(DeprecationWarning, match="old"):
+            foo.old = 1
+
+    def test_get_returns_value_and_warns(self) -> None:
+        class Foo:
+            old = deprecated_attribute("old")
+
+        foo = Foo()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            foo.old = 1
+
+        with pytest.warns(DeprecationWarning, match="old"):
+            value = foo.old
+        assert value == 1
+
+    def test_replacement_returns_replacement_value(self) -> None:
+        class Foo:
+            old = deprecated_attribute("old", replacement="new")
+
+            def __init__(self) -> None:
+                self.new = 0
+
+        foo = Foo()
+        foo.new = 42
+        with pytest.warns(DeprecationWarning, match="old"):
+            assert foo.old == 42
+
+    def test_since_and_removed_in_in_message(self) -> None:
+        class Foo:
+            old = deprecated_attribute(
+                "old", since="1.0", removed_in="2.0", replacement="new"
+            )
+
+        foo = Foo()
+        with pytest.warns(DeprecationWarning) as record:
+            foo.old = 5
+        msg = str(record[0].message)
+        assert "1.0" in msg
+        assert "2.0" in msg
+        assert "new" in msg
+
+
+class TestSilenced:
+    def test_suppresses_warning(self) -> None:
+        @deprecated()
+        def old() -> int:
+            return 1
+
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            with silenced():
+                assert old() == 1
+        assert caught == []
+
+    def test_warnings_resume_after_exit(self) -> None:
+        @deprecated()
+        def old() -> int:
+            return 1
+
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            with silenced():
+                old()
+            old()
+        assert len(caught) == 1
+        assert issubclass(caught[0].category, DeprecationWarning)

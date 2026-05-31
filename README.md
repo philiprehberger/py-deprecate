@@ -17,9 +17,11 @@ pip install philiprehberger-deprecate
 ```python
 from philiprehberger_deprecate import (
     deprecated,
+    deprecated_attribute,
     deprecated_class,
     deprecated_module,
     deprecated_param,
+    silenced,
 )
 ```
 
@@ -73,6 +75,33 @@ Importing `mypkg.legacy` emits:
 DeprecationWarning: Module 'mypkg.legacy' is deprecated. Will be removed in 2.0.0. Use 'mypkg.modern' instead.
 ```
 
+### Deprecating attributes
+
+```python
+class Config:
+    old_value = deprecated_attribute(
+        "old_value",
+        since="1.0",
+        removed_in="2.0",
+        replacement="new_value",
+    )
+
+    def __init__(self) -> None:
+        self.new_value = 42
+
+cfg = Config()
+cfg.old_value  # emits DeprecationWarning and returns 42 (from new_value)
+```
+
+### Silencing during tests
+
+```python
+from philiprehberger_deprecate import silenced
+
+with silenced():
+    old_function()  # no DeprecationWarning emitted inside the block
+```
+
 ## API
 
 | Function | Description |
@@ -81,6 +110,8 @@ DeprecationWarning: Module 'mypkg.legacy' is deprecated. Will be removed in 2.0.
 | `deprecated_param(param, *, renamed_to, remove_in)` | Function decorator that warns when a deprecated parameter is passed and optionally maps it to its replacement |
 | `deprecated_class(remove_in, *, alternative, message)` | Class decorator that emits `DeprecationWarning` on instantiation |
 | `deprecated_module(name, *, remove_in, alternative, message)` | Emits `DeprecationWarning` once when a deprecated module is imported |
+| `deprecated_attribute(name, since=None, removed_in=None, replacement=None)` | Descriptor that emits `DeprecationWarning` on attribute access; transparently returns the replacement attribute's value when set |
+| `silenced()` | Context manager that suppresses `DeprecationWarning` from this package (useful in tests) |
 
 ## Development
 

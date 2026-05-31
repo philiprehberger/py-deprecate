@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+import contextlib
 import functools
 import warnings
+from collections.abc import Iterator
 from typing import Any, Callable, TypeVar
 
 __all__ = [
     "deprecated",
+    "deprecated_attribute",
     "deprecated_class",
     "deprecated_module",
     "deprecated_param",
+    "silenced",
 ]
 
 F = TypeVar("F", bound=Callable[..., Any])
@@ -174,3 +178,80 @@ def _build_message(
     if alternative:
         parts.append(f"Use '{alternative}' instead.")
     return " ".join(parts)
+
+
+class deprecated_attribute:
+    """Descriptor that emits ``DeprecationWarning`` when the attribute is accessed.
+
+    Args:
+        name: Name of the deprecated attribute (used in the warning message).
+        since: Version in which the attribute was deprecated.
+        removed_in: Version when the attribute will be removed.
+        replacement: Name of the replacement attribute on the same instance.
+            When set, reading the deprecated attribute returns the replacement's
+            value transparently.
+
+    Example:
+        >>> class Foo:
+        ...     old_value = deprecated_attribute(
+        ...         "old_value",
+        ...         since="1.0",
+        ...         removed_in="2.0",
+        ...         replacement="new_value",
+        ...     )
+        ...     new_value = 42
+    """
+
+    def __init__(
+        self,
+        name: str,
+        *,
+        since: str | None = None,
+        removed_in: str | None = None,
+        replacement: str | None = None,
+    ) -> None:
+        self._name = name
+        self._since = since
+        self._removed_in = removed_in
+        self._replacement = replacement
+        self._attr_name = name
+
+    def __set_name__(self, owner: type, attr_name: str) -> None:
+        self._attr_name = attr_name
+
+    def _warn(self) -> None:
+        parts: list[str] = [f"Attribute '{self._name}' is deprecated."]
+        if self._since:
+            parts.append(f"Deprecated since {self._since}.")
+        if self._removed_in:
+            parts.append(f"Will be removed in {self._removed_in}.")
+        if self._replacement:
+            parts.append(f"Use '{self._replacement}' instead.")
+        warnings.warn(" ".join(parts), DeprecationWarning, stacklevel=3)
+
+    def __get__(self, instance: Any, owner: type) -> Any:
+        if instance is None:
+            return self
+        self._warn()
+        if self._replacement is not None and hasattr(instance, self._replacement):
+            return getattr(instance, self._replacement)
+        return instance.__dict__.get(f"_{self._attr_name}")
+
+    def __set__(self, instance: Any, value: Any) -> None:
+        self._warn()
+        instance.__dict__[f"_{self._attr_name}"] = value
+
+
+@contextlib.contextmanager
+def silenced() -> Iterator[None]:
+    """Context manager suppressing ``DeprecationWarning`` emitted by this package.
+
+    Useful in tests that intentionally exercise deprecated APIs.
+
+    Example:
+        >>> with silenced():
+        ...     old_function()  # no warning emitted
+    """
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        yield
